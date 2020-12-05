@@ -1,7 +1,6 @@
 package com.github.berry120.adventofcode_2020;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -16,24 +15,22 @@ public class Day5 {
 
   private int seatNum(String line) {
     return Integer.parseInt(
-        line.replace('B', '1')
-            .replace('F', '0')
-            .replace('R', '1')
-            .replace('L', '0'), 2);
+        line.replaceAll("[BR]", "1")
+            .replaceAll("[FL]", "0"), 2);
   }
 
   public int part1() {
     return Arrays.stream(lines)
-        .map(this::seatNum)
-        .max(Comparator.naturalOrder())
+        .mapToInt(this::seatNum)
+        .max()
         .orElseThrow();
   }
 
   public long part2() {
     Set<Integer> seats = IntStream
         .rangeClosed(Arrays.stream(lines)
-            .map(this::seatNum)
-            .min(Comparator.naturalOrder())
+            .mapToInt(this::seatNum)
+            .min()
             .orElseThrow(), part1())
         .boxed()
         .collect(Collectors.toSet());
