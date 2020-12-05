@@ -12,9 +12,7 @@ public class Day5 {
   private final String input;
 
   private int seatNum(String line) {
-    return Integer.parseInt(
-        line.replaceAll("[BR]", "1")
-            .replaceAll("[FL]", "0"), 2);
+    return Integer.parseInt(line.replaceAll("[BR]", "1").replaceAll("[FL]", "0"), 2);
   }
 
   public int part1() {
