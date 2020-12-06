@@ -12,7 +12,7 @@ public class Day6 {
 
   public long part1() {
     return Arrays.stream(groups)
-        .mapToLong(group -> group.chars().distinct().filter(c -> c != '\n').count())
+        .mapToLong(group -> group.chars().distinct().filter(Character::isLetter).count())
         .sum();
   }
 
