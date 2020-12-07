@@ -19,8 +19,8 @@ public class Day7 {
   }
 
   private boolean hasGold(String col) {
-    return bagMap.getOrDefault(col, Map.of()).entrySet().stream()
-        .anyMatch(bag -> bag.getKey().equals("shiny gold") || hasGold(bag.getKey()));
+    return bagMap.getOrDefault(col, Map.of()).keySet().stream()
+        .anyMatch(bag -> bag.equals("shiny gold") || hasGold(bag));
   }
 
   private int totalBags(String col) {
