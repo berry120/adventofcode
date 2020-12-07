@@ -27,10 +27,10 @@ public class Day7 {
         .anyMatch(bag -> bag.getValue().equals("shiny gold") || hasGold(bag.getValue()));
   }
 
-  private int fullBagSize(String col) {
+  private int totalBags(String col) {
     return bagMap.getOrDefault(col, List.of())
                .stream()
-               .mapToInt(bagDesc -> fullBagSize(bagDesc.getValue()) * bagDesc.getKey())
+               .mapToInt(bagDesc -> totalBags(bagDesc.getValue()) * bagDesc.getKey())
                .sum() + 1;
   }
 
@@ -41,7 +41,7 @@ public class Day7 {
   }
 
   public long part2() {
-    return fullBagSize("shiny gold") - 1;
+    return totalBags("shiny gold") - 1;
   }
 
 }
