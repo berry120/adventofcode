@@ -1,21 +1,21 @@
 package com.github.berry120.adventofcode_2020;
 
-import java.util.Arrays;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Day7 {
 
+  private static final Pattern PATTERN = Pattern.compile("(\\d+) (.+?) bag");
   private final Map<String, Map<String, Integer>> bagMap;
 
   public Day7(String input) {
     bagMap = input.lines().collect(Collectors.toMap(
-        l -> l.substring(0, l.indexOf("bags") - 1),
-        l -> Arrays.stream(l.substring(l.indexOf("contain") + 8, l.length() - 1).split(", "))
-            .filter(s -> !s.equals("no other bags"))
-            .map(s -> s.split(" "))
-            .collect(
-                Collectors.toMap(arr -> arr[1] + " " + arr[2], arr -> Integer.parseInt(arr[0])))));
+        line -> line.substring(0, line.indexOf("bags contain") - 1),
+        line -> PATTERN.matcher(line).results().collect(Collectors.toMap(
+            match -> match.group(2),
+            match -> Integer.parseInt(match.group(1))))
+    ));
   }
 
   private boolean hasGold(String col) {
