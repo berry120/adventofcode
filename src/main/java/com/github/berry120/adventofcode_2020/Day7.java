@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class Day7 {
 
-  private Map<String, List<SimpleEntry<Integer, String>>> bagMap;
+  private final Map<String, List<SimpleEntry<Integer, String>>> bagMap;
 
   public Day7(String input) {
     bagMap = input.lines().collect(Collectors.toMap(
