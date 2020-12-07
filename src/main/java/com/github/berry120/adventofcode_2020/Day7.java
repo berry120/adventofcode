@@ -1,14 +1,12 @@
 package com.github.berry120.adventofcode_2020;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Day7 {
 
-  private final Map<String, List<SimpleEntry<Integer, String>>> bagMap;
+  private final Map<String, Map<String, Integer>> bagMap;
 
   public Day7(String input) {
     bagMap = input.lines().collect(Collectors.toMap(
@@ -16,19 +14,18 @@ public class Day7 {
         l -> Arrays.stream(l.substring(l.indexOf("contain") + 8, l.length() - 1).split(", "))
             .filter(s -> !s.equals("no other bags"))
             .map(s -> s.split(" "))
-            .map(arr -> new SimpleEntry<>(Integer.parseInt(arr[0]), arr[1] + " " + arr[2]))
-            .collect(Collectors.toList()))
-    );
+            .collect(
+                Collectors.toMap(arr -> arr[1] + " " + arr[2], arr -> Integer.parseInt(arr[0])))));
   }
 
   private boolean hasGold(String col) {
-    return bagMap.getOrDefault(col, List.of()).stream()
-        .anyMatch(bag -> bag.getValue().equals("shiny gold") || hasGold(bag.getValue()));
+    return bagMap.getOrDefault(col, Map.of()).entrySet().stream()
+        .anyMatch(bag -> bag.getKey().equals("shiny gold") || hasGold(bag.getKey()));
   }
 
   private int totalBags(String col) {
-    return bagMap.getOrDefault(col, List.of()).stream()
-               .mapToInt(bagDesc -> totalBags(bagDesc.getValue()) * bagDesc.getKey())
+    return bagMap.getOrDefault(col, Map.of()).entrySet().stream()
+               .mapToInt(bagDesc -> totalBags(bagDesc.getKey()) * bagDesc.getValue())
                .sum() + 1;
   }
 
