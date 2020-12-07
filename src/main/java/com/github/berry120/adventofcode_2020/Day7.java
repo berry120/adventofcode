@@ -12,9 +12,9 @@ public class Day7 {
 
   public Day7(String input) {
     bagMap = input.lines().collect(Collectors.toMap(
-        l -> l.substring(0, l.indexOf("bags")).trim(),
-        l -> Arrays.stream(l.substring(l.indexOf("contain") + 7, l.length() - 1).split(","))
-            .map(s -> s.trim().split(" "))
+        l -> l.substring(0, l.indexOf("bags") - 1),
+        l -> Arrays.stream(l.substring(l.indexOf("contain") + 8, l.length() - 2).split(", "))
+            .map(s -> s.split(" "))
             .filter(arr -> arr.length == 4)
             .map(arr -> new SimpleEntry<>(Integer.parseInt(arr[0]), arr[1] + " " + arr[2]))
             .collect(Collectors.toList()))
