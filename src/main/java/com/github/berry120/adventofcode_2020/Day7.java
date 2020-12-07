@@ -2,29 +2,24 @@ package com.github.berry120.adventofcode_2020;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Day7 {
 
-  private Map<String, List<SimpleEntry<Integer, String>>> bagMap = new HashMap<>();
+  private Map<String, List<SimpleEntry<Integer, String>>> bagMap;
 
   public Day7(String input) {
-    input.lines().forEach(line -> {
-      String rootBag = line.substring(0, line.indexOf("bags")).trim();
-
-      Arrays.stream(line.substring(line.indexOf("contain") + 7, line.length() - 1).split(","))
-          .map(s -> s.trim().split(" "))
-          .filter(arr -> arr.length == 4)
-          .map(arr -> Stream.concat(bagMap.getOrDefault(rootBag, List.of()).stream(),
-              Stream.of(new SimpleEntry<>(Integer.parseInt(arr[0]), arr[1] + " " + arr[2])))
-              .collect(Collectors.toList()))
-          .forEach(containingBag -> bagMap.put(rootBag, containingBag));
-
-    });
+    bagMap = input.lines()
+        .collect(Collectors.toMap(
+            l -> l.substring(0, l.indexOf("bags")).trim(),
+            l -> Arrays.stream(l.substring(l.indexOf("contain") + 7, l.length() - 1).split(","))
+                .map(s -> s.trim().split(" "))
+                .filter(arr -> arr.length == 4)
+                .map(arr -> new SimpleEntry<>(Integer.parseInt(arr[0]), arr[1] + " " + arr[2]))
+                .collect(Collectors.toList()))
+        );
   }
 
   private boolean hasGold(String col) {
