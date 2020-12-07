@@ -1,12 +1,10 @@
 package com.github.berry120.adventofcode_2020;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,33 +16,32 @@ public class Day7 {
     input.lines().forEach(line -> {
       String rootBag = line.substring(0, line.indexOf("bags")).trim();
 
-      for (String containingBag : line.substring(line.indexOf("contain") + 7, line.length() - 1)
-          .trim().split(",")) {
-        Matcher m = Pattern.compile("(\\d+) (.+) bags?").matcher(containingBag);
-        bagMap.put(rootBag,
-            m.find() ? Stream.concat(bagMap.getOrDefault(rootBag, List.of()).stream(),
-                Stream.of(new SimpleEntry<>(Integer.parseInt(m.group(1)), m.group(2))))
-                .collect(Collectors.toList()) : List.of());
-      }
+      Arrays.stream(line.substring(line.indexOf("contain") + 7, line.length() - 1).split(","))
+          .map(s -> s.trim().split(" "))
+          .filter(arr -> arr.length == 4)
+          .map(arr -> Stream.concat(bagMap.getOrDefault(rootBag, List.of()).stream(),
+              Stream.of(new SimpleEntry<>(Integer.parseInt(arr[0]), arr[1] + " " + arr[2])))
+              .collect(Collectors.toList()))
+          .forEach(containingBag -> bagMap.put(rootBag, containingBag));
+
     });
   }
 
+  private boolean hasGold(String col) {
+    return bagMap.getOrDefault(col, List.of()).stream()
+        .anyMatch(bag -> bag.getValue().equals("shiny gold") || hasGold(bag.getValue()));
+  }
+
   private int fullBagSize(String col) {
-    return bagMap.getOrDefault(col, new ArrayList<>())
+    return bagMap.getOrDefault(col, List.of())
                .stream()
                .mapToInt(bagDesc -> fullBagSize(bagDesc.getValue()) * bagDesc.getKey())
                .sum() + 1;
   }
 
-  private boolean containsGold(String col) {
-    return bagMap.getOrDefault(col, new ArrayList<>()).stream()
-        .anyMatch(
-            bagDesc -> bagDesc.getValue().equals("shiny gold") || containsGold(bagDesc.getValue()));
-  }
-
   public long part1() {
     return bagMap.keySet().stream()
-        .filter(this::containsGold)
+        .filter(this::hasGold)
         .count();
   }
 
