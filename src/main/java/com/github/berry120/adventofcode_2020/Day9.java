@@ -32,7 +32,7 @@ public class Day9 {
     return LongStream.range(0, nums.length)
         .flatMap(i ->
             LongStream.range(i + 2, nums.length + 1)
-                .mapToObj(j -> Arrays.stream(Arrays.copyOfRange(nums, (int) i, (int) j))
+                .mapToObj(j -> Arrays.stream(nums, (int) i, (int) j)
                     .summaryStatistics())
                 .takeWhile(j -> j.getSum() <= sumTo)
                 .filter(j -> j.getSum() == sumTo)
