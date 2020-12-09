@@ -1,46 +1,45 @@
 package com.github.berry120.adventofcode_2020;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 public class Day9 {
 
   private final long[] nums;
 
   public Day9(String input) {
-    nums = Arrays.stream(input.split("\n")).mapToLong(Long::parseLong).toArray();
-  }
-
-  private boolean isValid(long[] arr, long sumTo) {
-    for (int i = 0; i < arr.length; i++) {
-      for (int j = 0; j < arr.length; j++) {
-        if (i != j && arr[i] + arr[j] == sumTo) {
-          return true;
-        }
-      }
-    }
-    return false;
+    nums = input.lines().mapToLong(Long::parseLong).toArray();
   }
 
   public long part1() {
-    for (int i = 25; i < nums.length; i++) {
-      if (!isValid(Arrays.stream(Arrays.copyOfRange(nums, i - 25, i)).toArray(), nums[i])) {
-        return nums[i];
-      }
-    }
-    throw new AssertionError();
+    int lookBack = 25;
+
+    return IntStream.range(lookBack, nums.length)
+        .filter(x -> IntStream.range(x - lookBack, x)
+            .allMatch(i -> IntStream.range(x - lookBack, x)
+                .noneMatch(j -> i != j && nums[i] + nums[j] == nums[x])
+            )
+        )
+        .mapToLong(x -> nums[x])
+        .findFirst()
+        .orElseThrow();
   }
 
   public long part2() {
     long sumTo = part1();
-    for (int base = 0; base < nums.length; base++) {
-      for (int i = base + 1; i < nums.length; i++) {
-        if (Arrays.stream(Arrays.copyOfRange(nums, base, i + 1)).sum() == sumTo) {
-          return Arrays.stream(Arrays.copyOfRange(nums, base, i + 1)).min().orElseThrow() + Arrays
-              .stream(Arrays.copyOfRange(nums, base, i + 1)).max().orElseThrow();
-        }
-      }
-    }
-    throw new AssertionError();
+
+    return LongStream.range(0, nums.length)
+        .flatMap(i ->
+            LongStream.range(i + 2, nums.length + 1)
+                .mapToObj(j -> Arrays.stream(Arrays.copyOfRange(nums, (int) i, (int) j))
+                    .summaryStatistics())
+                .takeWhile(j -> j.getSum() <= sumTo)
+                .filter(j -> j.getSum() == sumTo)
+                .mapToLong(s -> s.getMax() + s.getMin())
+        )
+        .findFirst()
+        .orElseThrow();
   }
 
 }
