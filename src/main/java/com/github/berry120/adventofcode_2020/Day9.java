@@ -17,7 +17,7 @@ public class Day9 {
 
     return IntStream.range(lookBack, nums.length)
         .filter(x -> IntStream.range(x - lookBack, x)
-            .allMatch(i -> IntStream.range(i, x)
+            .allMatch(i -> IntStream.range(i + 1, x)
                 .noneMatch(j -> i != j && nums[i] + nums[j] == nums[x])
             )
         )
