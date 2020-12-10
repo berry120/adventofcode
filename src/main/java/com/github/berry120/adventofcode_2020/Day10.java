@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 
 public class Day10 {
 
@@ -87,19 +86,14 @@ public class Day10 {
     return ret;
   }
 
-  public long part1() {
-    int diff1 = 1;
-    int diff3 = 1;
+  private long filterByDiff(int diff) {
+    return IntStream.range(0, nums.length - 1)
+               .filter(i -> nums[i + 1] - nums[i] == diff)
+               .count() + 1;
+  }
 
-    for (int i = 0; i < nums.length - 1; i++) {
-      if (Math.abs(nums[i] - nums[i + 1]) == 1) {
-        diff1++;
-      }
-      if (Math.abs(nums[i] - nums[i + 1]) == 3) {
-        diff3++;
-      }
-    }
-    return diff3 * diff1;
+  public long part1() {
+    return filterByDiff(1) * filterByDiff(3);
   }
 
 }
