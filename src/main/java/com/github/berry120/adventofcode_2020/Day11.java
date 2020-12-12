@@ -1,6 +1,7 @@
 package com.github.berry120.adventofcode_2020;
 
 import java.awt.Point;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -13,8 +14,8 @@ public class Day11 {
   }
 
   public int part1() {
-    int facing = 1;
     Point ship = new Point();
+    int facing = 1;
 
     for (String line : lines) {
       int num = Integer.parseInt(line.substring(1));
@@ -29,37 +30,26 @@ public class Day11 {
     }
 
     return Math.abs(ship.x) + Math.abs(ship.y);
-
   }
 
   public int part2() {
-
     Point ship = new Point(0, 0);
     Point way = new Point(10, 1);
 
     for (String line : lines) {
       int num = Integer.parseInt(line.substring(1));
-      switch (line.substring(0, 1)) {
+      String instr = line.substring(0,1);
+
+      switch (instr) {
         case "N" -> way = new Point(way.x, way.y + num);
         case "S" -> way = new Point(way.x, way.y - num);
         case "E" -> way = new Point(way.x + num, way.y);
         case "W" -> way = new Point(way.x - num, way.y);
-        case "L" -> way = switch (num % 360) {
-          case 90 -> new Point(-way.y, way.x);
-          case 180 -> new Point(-way.x, -way.y);
-          case 270 -> new Point(way.y, -way.x);
-          default -> null;
-        };
-        case "R" -> way = switch (num % 360) {
-          case 90 -> new Point(way.y, -way.x);
-          case 180 -> new Point(-way.x, -way.y);
-          case 270 -> new Point(-way.y, way.x);
-          default -> null;
-        };
+        case "L" -> way = Stream.iterate(way, w -> new Point(-w.y, w.x)).limit((num/90)+1).reduce((a,b)->b).orElseThrow();
+        case "R" -> way = Stream.iterate(way, w -> new Point(w.y, -w.x)).limit((num/90)+1).reduce((a,b)->b).orElseThrow();
         case "F" -> ship = new Point(ship.x + way.x * num, ship.y + way.y * num);
       }
     }
     return Math.abs(ship.x) + Math.abs(ship.y);
   }
-
 }
