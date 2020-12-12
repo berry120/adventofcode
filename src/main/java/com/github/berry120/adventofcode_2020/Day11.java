@@ -38,16 +38,17 @@ public class Day11 {
 
     for (String line : lines) {
       int num = Integer.parseInt(line.substring(1));
-      String instr = line.substring(0,1);
+      char c = line.charAt(0);
 
-      switch (instr) {
-        case "N" -> way = new Point(way.x, way.y + num);
-        case "S" -> way = new Point(way.x, way.y - num);
-        case "E" -> way = new Point(way.x + num, way.y);
-        case "W" -> way = new Point(way.x - num, way.y);
-        case "L" -> way = Stream.iterate(way, w -> new Point(-w.y, w.x)).limit((num/90)+1).reduce((a,b)->b).orElseThrow();
-        case "R" -> way = Stream.iterate(way, w -> new Point(w.y, -w.x)).limit((num/90)+1).reduce((a,b)->b).orElseThrow();
-        case "F" -> ship = new Point(ship.x + way.x * num, ship.y + way.y * num);
+      switch (c) {
+        case 'N', 'S' -> way = new Point(way.x, way.y + (c == 'N' ? num : -num));
+        case 'E', 'W' -> way = new Point(way.x + (c == 'E' ?  num : -num), way.y);
+        case 'L', 'R' -> way =
+            Stream.iterate(way, w -> c == 'L' ? new Point(-w.y, w.x) : new Point(w.y, -w.x))
+                .limit((num / 90) + 1)
+                .reduce((a, b) -> b)
+                .orElseThrow();
+        case 'F' -> ship = new Point(ship.x + way.x * num, ship.y + way.y * num);
       }
     }
     return Math.abs(ship.x) + Math.abs(ship.y);
