@@ -14,29 +14,21 @@ public class Day11 {
 
   public int part1() {
     int facing = 1;
-    int x = 0, y = 0;
+    Point ship = new Point();
 
     for (String line : lines) {
       int num = Integer.parseInt(line.substring(1));
-      switch (line.substring(0, 1)) {
-        case "N" -> y += num;
-        case "S" -> y -= num;
-        case "E" -> x += num;
-        case "W" -> x -= num;
-        case "L" -> facing = (facing + 3 * num / 90) % 4;
-        case "R" -> facing = (facing + num / 90) % 4;
-        case "F" -> {
-          switch (facing) {
-            case 0 -> y += num;
-            case 1 -> x += num;
-            case 2 -> y -= num;
-            case 3 -> x -= num;
-          }
-        }
-      }
+      String instr = line.substring(0,1);
+
+      if(instr.equals("N") || instr.equals("F") && facing==0) ship = new Point(ship.x, ship.y+num);
+      if(instr.equals("S") || instr.equals("F") && facing==2) ship = new Point(ship.x, ship.y-num);
+      if(instr.equals("E") || instr.equals("F") && facing==1) ship = new Point(ship.x+num, ship.y);
+      if(instr.equals("W") || instr.equals("F") && facing==3) ship = new Point(ship.x-num, ship.y);
+      if(instr.equals("L")) facing = (facing + 3 * num / 90) % 4;
+      if(instr.equals("R")) facing = (facing + num / 90) % 4;
     }
 
-    return Math.abs(x) + Math.abs(y);
+    return Math.abs(ship.x) + Math.abs(ship.y);
 
   }
 
