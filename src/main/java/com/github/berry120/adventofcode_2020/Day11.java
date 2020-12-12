@@ -1,5 +1,6 @@
 package com.github.berry120.adventofcode_2020;
 
+import java.awt.Point;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -15,18 +16,10 @@ public class Day11 {
     while (degrees > 0) {
       degrees -= 90;
       switch (dir) {
-        case "E":
-          dir = "N";
-          break;
-        case "N":
-          dir = "W";
-          break;
-        case "W":
-          dir = "S";
-          break;
-        case "S":
-          dir = "E";
-          break;
+        case "E" -> dir = "N";
+        case "N" -> dir = "W";
+        case "W" -> dir = "S";
+        case "S" -> dir = "E";
       }
     }
     return dir;
@@ -36,18 +29,10 @@ public class Day11 {
     while (degrees > 0) {
       degrees -= 90;
       switch (dir) {
-        case "E":
-          dir = "S";
-          break;
-        case "S":
-          dir = "W";
-          break;
-        case "W":
-          dir = "N";
-          break;
-        case "N":
-          dir = "E";
-          break;
+        case "E" -> dir = "S";
+        case "S" -> dir = "W";
+        case "W" -> dir = "N";
+        case "N" -> dir = "E";
       }
     }
     return dir;
@@ -63,58 +48,20 @@ public class Day11 {
     for (String line : lines) {
       int num = Integer.parseInt(line.substring(1));
       switch (line.substring(0, 1)) {
-        case "N": {
-          y += num;
-          break;
-        }
-        case "S": {
-          y -= num;
-          break;
-        }
-        case "E": {
-          x += num;
-          break;
-        }
-        case "W": {
-          x -= num;
-          break;
-        }
-        case "L": {
-          facing = turnL(facing, num);
-          break;
-        }
-        case "R": {
-          facing = turnR(facing, num);
-          break;
-        }
-        case "F": {
+        case "N" -> y += num;
+        case "S" -> y -= num;
+        case "E" -> x += num;
+        case "W" -> x -= num;
+        case "L" -> facing = turnL(facing, num);
+        case "R" -> facing = turnR(facing, num);
+        case "F" -> {
           switch (facing) {
-            case "N": {
-              y += num;
-              break;
-            }
-            case "S": {
-              y -= num;
-              break;
-            }
-            case "E": {
-              x += num;
-              break;
-            }
-            case "W": {
-              x -= num;
-              break;
-            }
-            default: {
-              throw new AssertionError(facing);
-            }
+            case "N" -> y += num;
+            case "S" -> y -= num;
+            case "E" -> x += num;
+            case "W" -> x -= num;
           }
-          break;
         }
-        default: {
-          throw new AssertionError(line.substring(0, 1));
-        }
-
       }
     }
 
@@ -124,60 +71,32 @@ public class Day11 {
 
   public int part2() {
 
-    int shipX = 0, shipY = 0;
-    int wayX = 10, wayY = 1;
+    Point ship = new Point(0, 0);
+    Point way = new Point(10, 1);
 
     for (String line : lines) {
       int num = Integer.parseInt(line.substring(1));
       switch (line.substring(0, 1)) {
-        case "N": {
-          wayY += num;
-          break;
-        }
-        case "S": {
-          wayY -= num;
-          break;
-        }
-        case "E": {
-          wayX += num;
-          break;
-        }
-        case "W": {
-          wayX -= num;
-          break;
-        }
-        case "L": {
-          while (num > 0) {
-            num -= 90;
-            int temp = wayY;
-            wayY = wayX;
-            wayX = -temp;
-          }
-          break;
-        }
-        case "R": {
-          while (num > 0) {
-            num -= 90;
-            int temp = wayY;
-            wayY = -wayX;
-            wayX = temp;
-          }
-          break;
-        }
-        case "F": {
-          shipX += (wayX * num);
-          shipY += (wayY * num);
-          break;
-        }
-        default: {
-          throw new AssertionError(line.substring(0, 1));
-        }
-
+        case "N" -> way = new Point(way.x, way.y + num);
+        case "S" -> way = new Point(way.x, way.y - num);
+        case "E" -> way = new Point(way.x + num, way.y);
+        case "W" -> way = new Point(way.x - num, way.y);
+        case "L" -> way = switch (num % 360) {
+          case 90 -> new Point(-way.y, way.x);
+          case 180 -> new Point(-way.x, -way.y);
+          case 270 -> new Point(way.y, -way.x);
+          default -> null;
+        };
+        case "R" -> way = switch (num % 360) {
+          case 90 -> new Point(way.y, -way.x);
+          case 180 -> new Point(-way.x, -way.y);
+          case 270 -> new Point(-way.y, way.x);
+          default -> null;
+        };
+        case "F" -> ship = new Point(ship.x + way.x * num, ship.y + way.y * num);
       }
     }
-
-    return Math.abs(shipX) + Math.abs(shipY);
-
+    return Math.abs(ship.x) + Math.abs(ship.y);
   }
 
 }
