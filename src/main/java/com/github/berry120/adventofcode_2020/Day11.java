@@ -12,37 +12,8 @@ public class Day11 {
     lines = input.split("\n");
   }
 
-  private String turnL(String dir, int degrees) {
-    while (degrees > 0) {
-      degrees -= 90;
-      switch (dir) {
-        case "E" -> dir = "N";
-        case "N" -> dir = "W";
-        case "W" -> dir = "S";
-        case "S" -> dir = "E";
-      }
-    }
-    return dir;
-  }
-
-  private String turnR(String dir, int degrees) {
-    while (degrees > 0) {
-      degrees -= 90;
-      switch (dir) {
-        case "E" -> dir = "S";
-        case "S" -> dir = "W";
-        case "W" -> dir = "N";
-        case "N" -> dir = "E";
-      }
-    }
-    return dir;
-  }
-
-
   public int part1() {
-
-    String facing = "E";
-
+    int facing = 1;
     int x = 0, y = 0;
 
     for (String line : lines) {
@@ -52,14 +23,14 @@ public class Day11 {
         case "S" -> y -= num;
         case "E" -> x += num;
         case "W" -> x -= num;
-        case "L" -> facing = turnL(facing, num);
-        case "R" -> facing = turnR(facing, num);
+        case "L" -> facing = (facing + 3 * num / 90) % 4;
+        case "R" -> facing = (facing + num / 90) % 4;
         case "F" -> {
           switch (facing) {
-            case "N" -> y += num;
-            case "S" -> y -= num;
-            case "E" -> x += num;
-            case "W" -> x -= num;
+            case 0 -> y += num;
+            case 1 -> x += num;
+            case 2 -> y -= num;
+            case 3 -> x -= num;
           }
         }
       }
