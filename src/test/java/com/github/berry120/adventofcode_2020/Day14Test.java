@@ -3,26 +3,25 @@ package com.github.berry120.adventofcode_2020;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.github.berry120.adventofcode_2020.input.Input;
-import java.math.BigInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class Day13Test {
+class Day14Test {
 
-  private Day13 day13;
+  private Day14 day14;
 
   @BeforeEach
   void setup() {
-    day13 = new Day13(Input.getInput("day13"));
+    day14 = new Day14(Input.getInput("day14"));
   }
 
   @Test
   void part1() {
-    assertEquals(3865, day13.part1());
+    assertEquals(5875750429995L, day14.part1());
   }
 
   @Test
   void part2() {
-    assertEquals(new BigInteger("415579909629976"), day13.part2());
+    assertEquals(5272149590143L, day14.part2());
   }
 }

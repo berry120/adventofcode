@@ -18,11 +18,11 @@ class Day12Test {
 
   @Test
   void part1() {
-    assertEquals(3865, day12.part1());
+    assertEquals(1186, day12.part1());
   }
 
   @Test
   void part2() {
-    assertEquals(new BigInteger("415579909629976"), day12.part2());
+    assertEquals(47806, day12.part2());
   }
 }

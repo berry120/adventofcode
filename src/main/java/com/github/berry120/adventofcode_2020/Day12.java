@@ -1,58 +1,56 @@
 package com.github.berry120.adventofcode_2020;
 
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.awt.Point;
+import java.util.stream.Stream;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class Day12 {
 
-  private final int line1;
-  private final String[] buses;
+  private final String[] lines;
 
   public Day12(String input) {
-    line1 = Integer.parseInt(input.split("\n")[0]);
-    buses = input.split("\n")[1].split(",");
+    lines = input.split("\n");
   }
 
   public int part1() {
-    List<Integer> busNums = Arrays.stream(buses).filter(x -> !x.equals("x"))
-        .mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
+    Point ship = new Point();
+    int facing = 1;
 
-    int minWait = Integer.MAX_VALUE;
-    int bus = -1;
+    for (String line : lines) {
+      int num = Integer.parseInt(line.substring(1));
+      String instr = line.substring(0,1);
 
-    for (int busNum : busNums) {
-      int rem = busNum - (line1 % busNum);
-      if (rem < minWait) {
-        bus = busNum;
-        minWait = rem;
-      }
+      if(instr.equals("N") || instr.equals("F") && facing==0) ship = new Point(ship.x, ship.y+num);
+      if(instr.equals("S") || instr.equals("F") && facing==2) ship = new Point(ship.x, ship.y-num);
+      if(instr.equals("E") || instr.equals("F") && facing==1) ship = new Point(ship.x+num, ship.y);
+      if(instr.equals("W") || instr.equals("F") && facing==3) ship = new Point(ship.x-num, ship.y);
+      if(instr.equals("L")) facing = (facing + 3 * num / 90) % 4;
+      if(instr.equals("R")) facing = (facing + num / 90) % 4;
     }
 
-    return bus * minWait;
+    return Math.abs(ship.x) + Math.abs(ship.y);
   }
 
-  public BigInteger part2() {
+  public int part2() {
+    Point ship = new Point(0, 0);
+    Point way = new Point(10, 1);
 
-    BigInteger min = BigInteger.ZERO;
-    BigInteger runningProduct = BigInteger.ONE;
+    for (String line : lines) {
+      int num = Integer.parseInt(line.substring(1));
+      char c = line.charAt(0);
 
-    BigInteger i = BigInteger.ZERO;
-
-    for (String str : buses) {
-      if (!str.equals("x")) {
-        BigInteger busNum = new BigInteger(str);
-
-        while (!min.add(i).mod(busNum).equals(BigInteger.ZERO)) {
-          min = min.add(runningProduct);
-        }
-        runningProduct = runningProduct.multiply(busNum);
+      switch (c) {
+        case 'N', 'S' -> way = new Point(way.x, way.y + (c == 'N' ? num : -num));
+        case 'E', 'W' -> way = new Point(way.x + (c == 'E' ?  num : -num), way.y);
+        case 'L', 'R' -> way =
+            Stream.iterate(way, w -> c == 'L' ? new Point(-w.y, w.x) : new Point(w.y, -w.x))
+                .limit((num / 90) + 1)
+                .reduce((a, b) -> b)
+                .orElseThrow();
+        case 'F' -> ship = new Point(ship.x + way.x * num, ship.y + way.y * num);
       }
-      i = i.add(BigInteger.ONE);
     }
-
-    return min;
+    return Math.abs(ship.x) + Math.abs(ship.y);
   }
-
 }
