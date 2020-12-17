@@ -53,7 +53,7 @@ public class Day16 {
     for (String validTicket : validTickets) {
       String[] parts = validTicket.split(",");
       for (int i = 0; i < parts.length; i++) {
-        Integer num = Integer.parseInt(parts[i].trim());
+        int num = Integer.parseInt(parts[i].trim());
         for (Range r : ranges) {
           if (!r.inRange(num)) {
             possibilities.get(r).remove((Object) i);
