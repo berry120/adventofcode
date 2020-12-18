@@ -1,6 +1,7 @@
 package com.github.berry120.adventofcode_2020;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 import lombok.AllArgsConstructor;
@@ -13,70 +14,56 @@ public class Day18 {
       .of('+', Math::addExact, '*', Math::multiplyExact);
 
   public long part1() {
-    long sum = 0;
-    for (String str : input.split("\n")) {
-      long result = Long.parseLong(resolveBrackets(str, false));
-      sum += result;
-    }
-    return sum;
+    return sum(false);
   }
 
   public long part2() {
-    long sum = 0;
-    for (String str : input.split("\n")) {
-      long result = Long.parseLong(resolveBrackets(str, true));
-      sum += result;
-    }
-    return sum;
+    return sum(true);
+  }
+
+  public long sum(boolean plusPrecedence) {
+    return input.lines()
+        .mapToLong(str -> Long.parseLong(eval(str.replace(" ", ""), plusPrecedence)))
+        .sum();
   }
 
   private static int nextOperatorIdx(String expression, boolean plusPrecedence) {
-    if (plusPrecedence) {
-      if (expression.contains("+")) {
-        return expression.indexOf("+");
-      } else {
-        return expression.indexOf("*");
-      }
-    } else {
-      return IntStream.of(expression.indexOf("+"), expression.indexOf("*"))
-          .filter(x -> x > 0)
-          .min().orElseThrow();
-    }
+    return plusPrecedence ?
+        Optional.of(expression.indexOf("+"))
+            .filter(x -> x > 0)
+            .orElse(expression.indexOf("*")) :
+        IntStream.of(expression.indexOf("+"), expression.indexOf("*"))
+            .filter(x -> x > 0)
+            .min().orElse(expression.length());
   }
 
-  private static String resolveBrackets(String expression, boolean plusPrecedence) {
-    expression = expression.replace(" ", "");
+  private static String eval(String expression, boolean plusPrecedence) {
     if (expression.contains("(")) {
       int endIdx = expression.indexOf(")");
       int startIdx = expression.substring(0, endIdx).lastIndexOf("(");
 
-      String simplified =
-          expression.substring(0, startIdx) + resolveBrackets(
-              expression.substring(startIdx + 1, endIdx), plusPrecedence) + expression
-              .substring(endIdx + 1);
-
-      return resolveBrackets(simplified, plusPrecedence);
+      return eval(expression.substring(0, startIdx) + eval(
+          expression.substring(startIdx + 1, endIdx), plusPrecedence) + expression
+                      .substring(endIdx + 1), plusPrecedence);
     } else if (expression.contains("+") || expression.contains("*")) {
 
       int firstOperatorIndex = nextOperatorIdx(expression, plusPrecedence);
 
-      int startIdx = firstOperatorIndex - 1;
-      while (startIdx > 0 && Character.isDigit(expression.charAt(startIdx - 1))) {
-        startIdx--;
-      }
-      int endIdx = firstOperatorIndex + 1;
-      while (endIdx < expression.length() - 1 && Character.isDigit(expression.charAt(endIdx + 1))) {
-        endIdx++;
-      }
+      int startIdx =
+          firstOperatorIndex - nextOperatorIdx(new StringBuilder(expression).reverse()
+              .substring(expression.length() - firstOperatorIndex), false);
+      int endIdx =
+          firstOperatorIndex + nextOperatorIdx(expression.substring(firstOperatorIndex + 1), false)
+          + 1;
 
-      return resolveBrackets(expression.substring(0, startIdx) +
-                             OPERATOR_MAP.get(expression.charAt(firstOperatorIndex))
-                                 .apply(Long.parseLong(
-                                     expression.substring(startIdx, firstOperatorIndex)),
-                                     Long.parseLong(
-                                         expression.substring(firstOperatorIndex + 1, endIdx + 1)))
-                             + expression
-                                 .substring(endIdx + 1), plusPrecedence);
+      return eval(expression.substring(0, startIdx) +
+                  OPERATOR_MAP.get(expression.charAt(firstOperatorIndex))
+                      .apply(Long.parseLong(
+                          expression.substring(startIdx, firstOperatorIndex)),
+                          Long.parseLong(
+                              expression.substring(firstOperatorIndex + 1, endIdx)))
+                  + expression
+                      .substring(endIdx), plusPrecedence);
     } else {
       return expression;
     }
