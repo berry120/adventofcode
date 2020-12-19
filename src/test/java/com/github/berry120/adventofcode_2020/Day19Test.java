@@ -17,11 +17,11 @@ class Day19Test {
 
   @Test
   void part1() {
-    System.out.println(day19.part1());
+    assertEquals(126, day19.part1());
   }
 
   @Test
   void part2() {
-    System.out.println(day19.part2());
+    assertEquals(282, day19.part2());
   }
 }
