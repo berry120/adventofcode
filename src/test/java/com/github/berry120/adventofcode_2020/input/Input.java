@@ -11,13 +11,13 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Input {
 
-  public static String getInput(String day) {
-    InputStream is = Input.class.getClassLoader().getResourceAsStream(day + ".input");
+  public static String getInput(int year, String day) {
+    InputStream is =
+        Input.class.getClassLoader().getResourceAsStream("input/" + year + "/" + day + ".input");
 
     return new BufferedReader(
-        new InputStreamReader(Objects.requireNonNull(is), StandardCharsets.UTF_8))
+            new InputStreamReader(Objects.requireNonNull(is), StandardCharsets.UTF_8))
         .lines()
         .collect(Collectors.joining("\n"));
   }
-
 }

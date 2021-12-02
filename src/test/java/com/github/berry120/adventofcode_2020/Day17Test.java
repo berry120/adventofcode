@@ -12,7 +12,7 @@ class Day17Test {
 
   @BeforeEach
   void setup() {
-    day17 = new Day17(Input.getInput("day17"));
+    day17 = new Day17(Input.getInput(2020,"day17"));
   }
 
   @Test
