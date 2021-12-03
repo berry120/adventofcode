@@ -1,6 +1,7 @@
 package com.github.berry120.adventofcode_2021;
 
 import lombok.AllArgsConstructor;
+import lombok.With;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -10,37 +11,35 @@ public class Day3 {
 
   private String input;
 
-  static String mostCommon(String input, Predicate<Tracker> p) {
+  public static int getBit(int num, int position) {
+    return (num >> position) & 1;
+  }
+
+  int mostCommon(String input, Predicate<Tracker> p) {
     Tracker[] trackerList = new Tracker[input.split("\n")[0].length()];
     for (int i = 0; i < trackerList.length; i++) {
       trackerList[i] = new Tracker(0, 0);
     }
 
-    for (String line : input.split("\n")) {
-      for (int i = 0; i < line.length(); i++) {
-        char c = line.charAt(i);
-        if (c == '1') {
-          trackerList[i] = new Tracker(trackerList[i].ones() + 1, trackerList[i].zeros());
-        } else {
-          trackerList[i] = new Tracker(trackerList[i].ones(), trackerList[i].zeros() + 1);
-        }
-      }
-    }
-
-    String result = "";
-    for (Tracker tracker : trackerList) {
-      if (p.test(tracker)) {
-        result += "1";
+    String output = "";
+    String[] lines = input.split("\n");
+    int lineLength = lines[0].length();
+    for (int i = 0; i < lineLength; i++) {
+      final int idx = i;
+      int num1s = (int) Arrays.stream(lines).filter(s -> s.charAt(idx) == '1').count();
+      int num0s = (int) Arrays.stream(lines).filter(s -> s.charAt(idx) == '0').count();
+      Tracker t = new Tracker(num1s, num0s);
+      if (p.test(t)) {
+        output += "1";
       } else {
-        result += "0";
+        output += "0";
       }
     }
-    return result;
+    return Integer.parseInt(output, 2);
   }
 
   public int part1() {
-    String str = mostCommon(input, t -> t.ones() >= t.zeros());
-    int val = Integer.parseInt(str, 2);
+    int val = mostCommon(input, t -> t.ones() >= t.zeros());
     return val * (~val & (int) Math.pow(2, input.split("\n")[0].length()) - 1);
   }
 
@@ -50,9 +49,19 @@ public class Day3 {
 
   public int part2(Predicate<Tracker> predicate) {
     List<String> remaining = Arrays.asList(input.split("\n"));
-    for (int i = 0; i < input.split("\n")[0].length(); i++) {
+    for (int i = 0; i < remaining.get(0).length(); i++) {
       final int idx = i;
-      char c = mostCommon(String.join("\n", remaining), predicate).charAt(i);
+
+      int result = mostCommon(String.join("\n", remaining), predicate);
+
+      int x = getBit(result, remaining.get(0).length() - 1 - i);
+      char c;
+      if (x == 1) {
+        c = '1';
+      } else {
+        c = '0';
+      }
+
       remaining = remaining.stream().filter(s -> s.charAt(idx) == c).toList();
       if (remaining.size() == 1) {
         return Integer.parseInt(remaining.get(0), 2);
@@ -61,5 +70,6 @@ public class Day3 {
     throw new RuntimeException();
   }
 
+  @With
   record Tracker(int ones, int zeros) {}
 }
