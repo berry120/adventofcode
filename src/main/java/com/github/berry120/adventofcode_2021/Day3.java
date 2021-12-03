@@ -1,10 +1,10 @@
 package com.github.berry120.adventofcode_2021;
 
-import lombok.AllArgsConstructor;
-import lombok.With;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import lombok.AllArgsConstructor;
+import lombok.With;
 
 @AllArgsConstructor
 public class Day3 {
@@ -16,18 +16,13 @@ public class Day3 {
   }
 
   int mostCommon(String input, Predicate<Tracker> p) {
-    Tracker[] trackerList = new Tracker[input.split("\n")[0].length()];
-    for (int i = 0; i < trackerList.length; i++) {
-      trackerList[i] = new Tracker(0, 0);
-    }
-
     String output = "";
     String[] lines = input.split("\n");
     int lineLength = lines[0].length();
     for (int i = 0; i < lineLength; i++) {
       final int idx = i;
       int num1s = (int) Arrays.stream(lines).filter(s -> s.charAt(idx) == '1').count();
-      int num0s = (int) Arrays.stream(lines).filter(s -> s.charAt(idx) == '0').count();
+      int num0s = lines.length - num1s;
       Tracker t = new Tracker(num1s, num0s);
       if (p.test(t)) {
         output += "1";
@@ -39,12 +34,12 @@ public class Day3 {
   }
 
   public int part1() {
-    int val = mostCommon(input, t -> t.ones() >= t.zeros());
-    return val * (~val & (int) Math.pow(2, input.split("\n")[0].length()) - 1);
+    return mostCommon(input, t -> t.ones() >= t.zeros()) * mostCommon(input,
+        t -> t.ones() < t.zeros());
   }
 
   public int part2() {
-    return part2(t -> t.ones() >= t.zeros()) * part2(t -> t.zeros() > t.ones());
+    return part2(t -> t.ones() >= t.zeros()) * part2(t -> t.ones() < t.zeros());
   }
 
   public int part2(Predicate<Tracker> predicate) {
@@ -71,5 +66,7 @@ public class Day3 {
   }
 
   @With
-  record Tracker(int ones, int zeros) {}
+  record Tracker(int ones, int zeros) {
+
+  }
 }

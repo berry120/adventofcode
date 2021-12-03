@@ -1,10 +1,10 @@
 package com.github.berry120.adventofcode_2021;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.github.berry120.adventofcode_2020.input.Input;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class Day3Test {
 
@@ -12,7 +12,7 @@ class Day3Test {
 
   @BeforeEach
   void setup() {
-    day3= new Day3(Input.getInput(2021,"day3"));
+    day3 = new Day3(Input.getInput(2021, "day3"));
   }
 
   @Test
