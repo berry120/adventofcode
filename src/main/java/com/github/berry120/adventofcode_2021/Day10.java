@@ -1,10 +1,6 @@
 package com.github.berry120.adventofcode_2021;
 
-import com.sun.jdi.CharType;
 import lombok.AllArgsConstructor;
-import lombok.With;
-import reactor.core.publisher.Flux;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
