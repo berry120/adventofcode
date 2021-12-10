@@ -121,6 +121,4 @@ public class Day10 {
   public boolean isOpen(char c) {
     return c == '(' || c == '[' || c == '{' || c == '<';
   }
-
-  record State(char c, int level) {}
 }
