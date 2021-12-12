@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @AllArgsConstructor
 public class Day12 {
@@ -69,8 +68,10 @@ public class Day12 {
         ret.add(path);
       } else {
         for (String nextChoice : adjMap.get(last)) {
-          if (!nextChoice.equals("end") && nextChoice.equals(nextChoice.toLowerCase())
-              && containsTwice(path) && path.contains(nextChoice)) {
+          if (!nextChoice.equals("end")
+              && nextChoice.equals(nextChoice.toLowerCase())
+              && containsTwice(path)
+              && path.contains(nextChoice)) {
             continue;
           }
           List<String> newPath = new ArrayList<>(path);
@@ -83,49 +84,22 @@ public class Day12 {
   }
 
   boolean containsTwice(List<String> path) {
-    Map<String, Long> freq = frequencyMap(path.stream().filter(s->s.equals(s.toLowerCase())));
-    for(String str : freq.keySet()) {
-      if(freq.get(str)>=2) {
-//        System.out.println(path);
-        return true;
-      }
-    }
-    return false;
-//
-//    int x = 0;
-//    for(String str : path) {
-//      if(str.equals(choice)) {
-//        x++;
-//        if(x>=2) break;
-//      }
-//    }
-//    return x>=2;
+    Map<String, Long> freq =
+        path.stream()
+            .filter(s -> s.equals(s.toLowerCase()))
+            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+    return freq.values().stream().anyMatch(n->n>=2);
   }
 
-  <T> Map<T, Long>  frequencyMap(Stream<T> elements) {
-    return elements.collect(
-            Collectors.groupingBy(
-                    Function.identity(),
-                    HashMap::new, // can be skipped
-                    Collectors.counting()
-            )
-    );
-  }
-
-  boolean test(List<List<String>> paths) {
-    for (List<String> path : paths) {
-      if (!path.get(path.size() - 1).equals("end")) {
-        return false;
-      }
-    }
-    return true;
+  boolean hasIncompletePaths(List<List<String>> paths) {
+    return paths.stream().anyMatch(path -> !path.get(path.size() - 1).equals("end"));
   }
 
   public int part1() {
     List<List<String>> paths = new ArrayList<>();
     paths.add(List.of("start"));
 
-    while (!test(paths)) {
+    while (hasIncompletePaths(paths)) {
       paths = getRoutes1(paths);
     }
 
@@ -136,7 +110,7 @@ public class Day12 {
     List<List<String>> paths = new ArrayList<>();
     paths.add(List.of("start"));
 
-    while (!test(paths)) {
+    while (hasIncompletePaths(paths)) {
       paths = getRoutes2(paths);
     }
 
