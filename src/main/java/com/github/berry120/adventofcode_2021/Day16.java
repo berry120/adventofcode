@@ -10,19 +10,11 @@ public class Day16 {
 
   private final String input;
 
-  public int part1() {
-    String bin = hexToBin(input);
-
-    Packet p = parseNextPacket(bin);
-
-    System.out.println(p.sumVersion());
-
-    return 0;
+  public long part1() {
+    return parseNextPacket(hexToBin(input)).sumVersion();
   }
 
   public Packet parseNextPacket(String bin) {
-    System.out.println("Parsing: " + bin);
-
     int version = Integer.parseInt(bin.substring(0, 3), 2);
     int id = Integer.parseInt(bin.substring(3, 6), 2);
     if (id == 4) {
@@ -36,14 +28,13 @@ public class Day16 {
           break;
         }
       }
-      int val = Integer.parseInt(bits, 2);
+      long val = Long.parseLong(bits, 2);
       System.out.println("Found literal: " + val);
       return new LiteralPacket(version, id, idx, val);
     } else {
       String lengthTypeId = bin.substring(6, 7);
       if (lengthTypeId.equals("0")) {
         int totalLength = Integer.parseInt(bin.substring(7, 22), 2);
-        System.out.println(bin.substring(7, 22));
         System.out.println("Found Operator, Length: " + totalLength);
         int endIdx = 22 + totalLength;
 
@@ -54,28 +45,30 @@ public class Day16 {
           nested.add(p);
           nextBin = nextBin.substring(p.binaryLength);
         }
-        return new NestedPacket(version, id, totalLength, nested);
+        return new NestedPacket(version, id, endIdx, nested);
       } else {
-        int numSubPackets = Integer.parseInt(bin.substring(7, 18), 2);
+        long numSubPackets = Long.parseLong(bin.substring(7, 18), 2);
         System.out.println("Found Operator, Subpackets: " + numSubPackets);
         String nextBin = bin.substring(18);
-        int totalLength = 0;
+        int totalLength = 18;
 
         List<Packet> nested = new ArrayList<>();
-        for (int i = 0; i < numSubPackets; i++) {
+        for (long i = 0; i < numSubPackets; i++) {
           System.out.println("Subpacket " + (i+1));
           Packet p = parseNextPacket(nextBin);
           totalLength += p.binaryLength;
           nested.add(p);
           nextBin = nextBin.substring(p.binaryLength);
         }
+        System.out.println("Length was: " + totalLength);
+        System.out.println("Returning nested packet of length " + nested.size());
         return new NestedPacket(version, id, totalLength, nested);
       }
     }
   }
 
-  public int part2() {
-    return 0;
+  public long part2() {
+    return parseNextPacket(hexToBin(input)).eval();
   }
 
   private String hexToBin(String hex) {
@@ -104,14 +97,15 @@ public class Day16 {
     int packetType;
     int binaryLength;
 
-    abstract int sumVersion();
+    abstract long sumVersion();
+    abstract long eval();
   }
 
   @Data
   static class LiteralPacket extends Packet {
-    int literalVal;
+    long literalVal;
 
-    public LiteralPacket(int version, int type, int length, int val) {
+    public LiteralPacket(int version, int type, int length, long val) {
       this.packetVersion = version;
       this.packetType = type;
       this.binaryLength = length;
@@ -119,8 +113,12 @@ public class Day16 {
     }
 
     @Override
-    int sumVersion() {
+    long sumVersion() {
       return packetVersion;
+    }
+
+    long eval() {
+      return literalVal;
     }
   }
 
@@ -136,8 +134,37 @@ public class Day16 {
     }
 
     @Override
-    int sumVersion() {
-      return packetVersion + nested.stream().map(x -> x.sumVersion()).reduce(0, Integer::sum);
+    long sumVersion() {
+      return packetVersion + nested.stream().map(x -> x.sumVersion()).reduce(0L, Long::sum);
+    }
+
+    long eval() {
+      switch(packetType) {
+        case 0 -> {
+          return nested.stream().map(x->x.eval()).reduce(0L,Long::sum);
+        }
+        case 1 -> {
+          return nested.stream().map(x->x.eval()).reduce(1L,(a,b)->a*b);
+        }
+        case 2 -> {
+          return nested.stream().map(x->x.eval()).reduce(Long.MAX_VALUE,Long::min);
+        }
+        case 3 -> {
+          return nested.stream().map(x->x.eval()).reduce(0L,Long::max);
+        }
+        case 5 -> {
+          return nested.get(0).eval()>nested.get(1).eval()?1:0;
+        }
+        case 6 -> {
+          return nested.get(0).eval()<nested.get(1).eval()?1:0;
+        }
+        case 7 -> {
+          return nested.get(0).eval()==nested.get(1).eval()?1:0;
+        }
+        default -> {
+          throw new RuntimeException();
+        }
+      }
     }
   }
 }
