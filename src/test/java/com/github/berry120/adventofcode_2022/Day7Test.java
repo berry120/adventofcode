@@ -6,13 +6,13 @@ import com.github.berry120.adventofcode_2020.input.Input;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class Day6Test {
+class Day7Test {
 
-  private Day6 day;
+  private Day7 day;
 
   @BeforeEach
   void setup() {
-    day = new Day6(Input.getInput(2022,"day6"));
+    day = new Day7(Input.getInput(2022,"day7"));
   }
 
   @Test

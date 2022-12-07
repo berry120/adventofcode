@@ -6,7 +6,7 @@ import java.util.Stack;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class Day6 {
+public class Day7 {
 
   private final String input;
 
