@@ -1,6 +1,6 @@
 package com.github.berry120.adventofcode_2021;
 
-import com.github.berry120.adventofcode_2020.input.Input;
+import com.github.berry120.Input;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

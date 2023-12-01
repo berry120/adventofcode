@@ -1,4 +1,4 @@
-package com.github.berry120.adventofcode_2020.input;
+package com.github.berry120;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
