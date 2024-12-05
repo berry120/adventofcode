@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 public class Day5 {
 
   private List<int[]> rules;
