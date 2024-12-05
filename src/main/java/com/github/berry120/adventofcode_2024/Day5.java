@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import lombok.AllArgsConstructor;
 
 public class Day5 {
 
-  private List<int[]> rules;
-  private List<List<Integer>> sequences;
+  private final List<int[]> rules;
+  private final List<List<Integer>> sequences;
 
   public Day5(String input) {
     rules =
